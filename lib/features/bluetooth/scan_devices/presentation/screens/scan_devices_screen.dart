@@ -60,22 +60,16 @@ class _ScanDevicesScreenView extends BaseScreen<ScanDevicesCubit, ScanDevicesSta
         final device = result.device;
         final deviceName = device.platformName.isEmpty ? 'Unknown' : device.platformName;
 
-        return ListTile(
-          title: Text(deviceName),
-          subtitle: Text(device.remoteId.str),
-          trailing: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text('${result.rssi} dBm'),
-              const SizedBox(width: 8),
-              ElevatedButton(
-                onPressed: () {
-                  context.read<BluetoothDeviceProvider>().setSelectedDevice(device);
-                  Navigator.pushNamed(context, '/connect');
-                },
-                child: const Text('Connect'),
-              ),
-            ],
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTap: () {
+            context.read<BluetoothDeviceProvider>().setSelectedDevice(device);
+            Navigator.pushNamed(context, '/connect');
+          },
+          child: ListTile(
+            title: Text(deviceName),
+            subtitle: Text(device.remoteId.str),
+            trailing: Text('${device.isConnected}'),
           ),
         );
       },
