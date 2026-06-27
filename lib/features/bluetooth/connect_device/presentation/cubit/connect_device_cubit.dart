@@ -23,6 +23,15 @@ class ConnectDeviceCubit extends BaseCubit<ConnectDeviceState> {
   }) : super(const ConnectDeviceState());
 
   Future<void> connect(BluetoothDevice device) async {
+    if (deviceProvider.isAnyDeviceConnected &&
+        deviceProvider.connectedDevice?.remoteId != device.remoteId) {
+      emit(state.copyWithS(
+        effect: ShowErrorSnackBar(
+            "A device is already connected. Please disconnect it before connecting to a new one."),
+      ));
+      return;
+    }
+
     setLoading(true);
     
     final result = await connectUseCase(device);

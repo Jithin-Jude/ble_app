@@ -23,7 +23,7 @@ class _ConnectDeviceScreenView extends BaseScreen<ConnectDeviceCubit, ConnectDev
 
   @override
   Widget buildScreen(BuildContext context, ConnectDeviceState state) {
-    final deviceProvider = context.read<BluetoothDeviceProvider>();
+    final deviceProvider = context.watch<BluetoothDeviceProvider>();
     final device = deviceProvider.selectedDevice;
 
     if (device == null) {
@@ -35,6 +35,8 @@ class _ConnectDeviceScreenView extends BaseScreen<ConnectDeviceCubit, ConnectDev
 
     final connectionState = state.connectionState;
     final isConnected = connectionState == BluetoothConnectionState.connected;
+    final isAnotherDeviceConnected = deviceProvider.isAnyDeviceConnected &&
+        deviceProvider.connectedDevice?.remoteId != device.remoteId;
 
     return AppScaffold(
       title: 'Connect Device',
@@ -74,9 +76,20 @@ class _ConnectDeviceScreenView extends BaseScreen<ConnectDeviceCubit, ConnectDev
                 onPressed: () => context.read<ConnectDeviceCubit>().disconnect(device),
               ),
             ] else ...[
+              if (isAnotherDeviceConnected)
+                const Padding(
+                  padding: EdgeInsets.only(bottom: 16.0),
+                  child: Text(
+                    'Another device is currently connected. Disconnect it to connect here.',
+                    style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
               PrimaryButton(
                 label: 'Connect',
-                onPressed: () => context.read<ConnectDeviceCubit>().connect(device),
+                onPressed: isAnotherDeviceConnected
+                    ? null
+                    : () => context.read<ConnectDeviceCubit>().connect(device),
               ),
             ],
           ],

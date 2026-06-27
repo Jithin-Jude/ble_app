@@ -18,6 +18,10 @@ class BluetoothDeviceProvider extends ChangeNotifier {
   /// The current connection state of the device.
   BluetoothConnectionState get connectionState => _connectionState;
 
+  /// Returns true if there is an active connection to any device.
+  bool get isAnyDeviceConnected =>
+      _connectedDevice != null && _connectionState == BluetoothConnectionState.connected;
+
   /// Sets the selected device.
   void setSelectedDevice(BluetoothDevice? device) {
     _selectedDevice = device;
