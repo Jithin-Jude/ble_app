@@ -27,6 +27,8 @@ class _ScanDevicesScreenView extends BaseScreen<ScanDevicesCubit, ScanDevicesSta
 
   @override
   Widget buildScreen(BuildContext context, ScanDevicesState state) {
+    final deviceProvider = context.watch<BluetoothDeviceProvider>();
+
     return AppScaffold(
       title: 'Scan Devices',
       actions: [
@@ -41,11 +43,15 @@ class _ScanDevicesScreenView extends BaseScreen<ScanDevicesCubit, ScanDevicesSta
             onPressed: () => context.read<ScanDevicesCubit>().startScanning(),
           ),
       ],
-      body: _buildBody(context, state),
+      body: _buildBody(context, state, deviceProvider),
     );
   }
 
-  Widget _buildBody(BuildContext context, ScanDevicesState state) {
+  Widget _buildBody(
+    BuildContext context,
+    ScanDevicesState state,
+    BluetoothDeviceProvider deviceProvider,
+  ) {
     if (state.scanResults.isEmpty) {
       if (!state.isScanning) {
         return const Center(child: Text('Press search to start scanning'));
@@ -59,6 +65,12 @@ class _ScanDevicesScreenView extends BaseScreen<ScanDevicesCubit, ScanDevicesSta
         final result = state.scanResults[index];
         final device = result.device;
         final deviceName = device.platformName.isEmpty ? 'Unknown' : device.platformName;
+
+        final isConnectedToThisDevice = deviceProvider.connectedDevice?.remoteId == device.remoteId;
+        final connectionStatus = isConnectedToThisDevice
+            ? deviceProvider.connectionState.toString().split('.').last.toUpperCase()
+            : (device.isConnected ? 'CONNECTED' : 'DISCONNECTED');
+        final isConnected = connectionStatus == 'CONNECTED';
 
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
@@ -75,7 +87,13 @@ class _ScanDevicesScreenView extends BaseScreen<ScanDevicesCubit, ScanDevicesSta
               ],
             ),
             subtitle: Text(device.remoteId.str),
-            trailing: Text('${device.isConnected}'),
+            trailing: Text(
+              connectionStatus,
+              style: TextStyle(
+                color: isConnected ? Colors.green : Colors.grey,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
           ),
         );
       },
