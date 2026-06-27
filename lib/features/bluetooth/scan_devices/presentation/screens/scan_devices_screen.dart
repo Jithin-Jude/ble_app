@@ -67,7 +67,13 @@ class _ScanDevicesScreenView extends BaseScreen<ScanDevicesCubit, ScanDevicesSta
             Navigator.pushNamed(context, '/connect');
           },
           child: ListTile(
-            title: Text(deviceName),
+            title: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(deviceName),
+                Text("Connectable: ${result.advertisementData.connectable}"),
+              ],
+            ),
             subtitle: Text(device.remoteId.str),
             trailing: Text('${device.isConnected}'),
           ),
