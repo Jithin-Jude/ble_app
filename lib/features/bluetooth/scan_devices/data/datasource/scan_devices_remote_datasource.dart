@@ -6,6 +6,8 @@ abstract class ScanDevicesRemoteDataSource {
   Future<void> stopScan();
   Stream<List<ScanResult>> get scanResults;
   Stream<bool> get isScanning;
+  List<BluetoothDevice> get connectedDevices;
+  Future<void> disconnect(BluetoothDevice device);
 }
 
 class ScanDevicesRemoteDataSourceImpl implements ScanDevicesRemoteDataSource {
@@ -27,5 +29,13 @@ class ScanDevicesRemoteDataSourceImpl implements ScanDevicesRemoteDataSource {
   Stream<List<ScanResult>> get scanResults => bluetoothManager.scanResults;
 
   @override
-  Stream<bool> get isScanning => FlutterBluePlus.isScanning;
+  Stream<bool> get isScanning => bluetoothManager.isScanning;
+
+  @override
+  List<BluetoothDevice> get connectedDevices => bluetoothManager.connectedDevices;
+
+  @override
+  Future<void> disconnect(BluetoothDevice device) async {
+    await bluetoothManager.disconnect(device);
+  }
 }

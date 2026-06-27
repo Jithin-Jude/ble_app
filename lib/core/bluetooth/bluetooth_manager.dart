@@ -25,8 +25,13 @@ class BluetoothManager {
     await FlutterBluePlus.stopScan();
   }
 
+  Stream<bool> get isScanning => FlutterBluePlus.isScanning;
+
   /// Returns a stream of scan results.
   Stream<List<ScanResult>> get scanResults => FlutterBluePlus.scanResults;
+
+  /// Returns a list of currently connected devices.
+  List<BluetoothDevice> get connectedDevices => FlutterBluePlus.connectedDevices;
 
   /// Connects to a specific [BluetoothDevice].
   Future<void> connect(BluetoothDevice device) async {

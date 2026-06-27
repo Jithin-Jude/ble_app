@@ -13,4 +13,10 @@ abstract class ScanDevicesRepository {
 
   /// Stream to check if scanning is in progress.
   Stream<bool> get isScanning;
+
+  /// Returns a list of currently connected devices.
+  List<BluetoothDevice> get connectedDevices;
+
+  /// Disconnects from a specific [BluetoothDevice].
+  Future<Result<void>> disconnect(BluetoothDevice device);
 }

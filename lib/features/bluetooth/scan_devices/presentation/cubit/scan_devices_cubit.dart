@@ -3,6 +3,9 @@ import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../../domain/usecase/get_scan_results_usecase.dart';
 import '../../domain/usecase/start_scan_usecase.dart';
 import '../../domain/usecase/stop_scan_usecase.dart';
+import '../../domain/usecase/get_is_scanning_usecase.dart';
+import '../../domain/usecase/get_connected_devices_usecase.dart';
+import '../../domain/usecase/disconnect_device_usecase.dart';
 import 'scan_devices_state.dart';
 import '../../../../../core/result/result.dart';
 import '../../../../../core/presentation/base_cubit.dart';
@@ -13,6 +16,9 @@ class ScanDevicesCubit extends BaseCubit<ScanDevicesState> {
   final StartScanUseCase startScanUseCase;
   final StopScanUseCase stopScanUseCase;
   final GetScanResultsUseCase getScanResultsUseCase;
+  final GetIsScanningUseCase getIsScanningUseCase;
+  final GetConnectedDevicesUseCase getConnectedDevicesUseCase;
+  final DisconnectDeviceUseCase disconnectDeviceUseCase;
 
   StreamSubscription? _scanResultsSubscription;
   StreamSubscription? _isScanningSubscription;
@@ -21,10 +27,13 @@ class ScanDevicesCubit extends BaseCubit<ScanDevicesState> {
     required this.startScanUseCase,
     required this.stopScanUseCase,
     required this.getScanResultsUseCase,
+    required this.getIsScanningUseCase,
+    required this.getConnectedDevicesUseCase,
+    required this.disconnectDeviceUseCase,
   }) : super(const ScanDevicesState());
 
   void init() {
-    _isScanningSubscription = FlutterBluePlus.isScanning.listen((isScanning) {
+    _isScanningSubscription = getIsScanningUseCase().listen((isScanning) {
       emit(state.copyWithS(isScanning: isScanning));
     });
 
@@ -70,6 +79,12 @@ class ScanDevicesCubit extends BaseCubit<ScanDevicesState> {
   }
 
   Future<void> startScanning() async {
+    // Disconnect any existing connection before starting scan
+    final connectedDevices = getConnectedDevicesUseCase();
+    for (var device in connectedDevices) {
+      await disconnectDeviceUseCase(device);
+    }
+
     final result = await startScanUseCase();
     if (result is Failure) {
       emit(state.copyWithS(effect: ShowErrorSnackBar(result.message)));

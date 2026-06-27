@@ -33,4 +33,17 @@ class ScanDevicesRepositoryImpl implements ScanDevicesRepository {
 
   @override
   Stream<bool> get isScanning => remoteDataSource.isScanning;
+
+  @override
+  List<BluetoothDevice> get connectedDevices => remoteDataSource.connectedDevices;
+
+  @override
+  Future<Result<void>> disconnect(BluetoothDevice device) async {
+    try {
+      await remoteDataSource.disconnect(device);
+      return Success(null, statusCode: 200, message: 'Disconnected');
+    } catch (e) {
+      return Failure(message: e.toString());
+    }
+  }
 }

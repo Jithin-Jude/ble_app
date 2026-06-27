@@ -5,6 +5,9 @@ import '../domain/repository/scan_devices_repository.dart';
 import '../domain/usecase/get_scan_results_usecase.dart';
 import '../domain/usecase/start_scan_usecase.dart';
 import '../domain/usecase/stop_scan_usecase.dart';
+import '../domain/usecase/get_is_scanning_usecase.dart';
+import '../domain/usecase/get_connected_devices_usecase.dart';
+import '../domain/usecase/disconnect_device_usecase.dart';
 import '../presentation/cubit/scan_devices_cubit.dart';
 
 Future<void> init(GetIt sl) async {
@@ -22,6 +25,9 @@ Future<void> init(GetIt sl) async {
   sl.registerLazySingleton(() => StartScanUseCase(sl()));
   sl.registerLazySingleton(() => StopScanUseCase(sl()));
   sl.registerLazySingleton(() => GetScanResultsUseCase(sl()));
+  sl.registerLazySingleton(() => GetIsScanningUseCase(sl()));
+  sl.registerLazySingleton(() => GetConnectedDevicesUseCase(sl()));
+  sl.registerLazySingleton(() => DisconnectDeviceUseCase(sl()));
 
   // Cubits
   sl.registerFactory(
@@ -29,6 +35,9 @@ Future<void> init(GetIt sl) async {
       startScanUseCase: sl(),
       stopScanUseCase: sl(),
       getScanResultsUseCase: sl(),
+      getIsScanningUseCase: sl(),
+      getConnectedDevicesUseCase: sl(),
+      disconnectDeviceUseCase: sl(),
     ),
   );
 }
