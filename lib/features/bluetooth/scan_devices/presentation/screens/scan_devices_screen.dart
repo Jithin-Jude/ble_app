@@ -1,108 +1,84 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
-import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../cubit/scan_devices_cubit.dart';
 import '../cubit/scan_devices_state.dart';
 import '../../../../../core/widgets/app_scaffold.dart';
 import '../../../../../core/widgets/app_empty_widget.dart';
 import '../../../../../core/provider/bluetooth_device_provider.dart';
+import '../../../../../core/presentation/base_screen.dart';
 
-class ScanDevicesScreen extends StatefulWidget {
+class ScanDevicesScreen extends StatelessWidget {
   const ScanDevicesScreen({super.key});
 
   @override
-  State<ScanDevicesScreen> createState() => _ScanDevicesScreenState();
+  Widget build(BuildContext context) {
+    return const _ScanDevicesScreenView();
+  }
 }
 
-class _ScanDevicesScreenState extends State<ScanDevicesScreen> {
+class _ScanDevicesScreenView extends BaseScreen<ScanDevicesCubit, ScanDevicesState> {
+  const _ScanDevicesScreenView();
+
   @override
-  void initState() {
-    super.initState();
+  void onInitState(BuildContext context) {
     context.read<ScanDevicesCubit>().init();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return BlocBuilder<ScanDevicesCubit, ScanDevicesState>(
-      builder: (context, state) {
-        bool isScanning = false;
-        if (state is ScanDevicesLoaded) {
-          isScanning = state.isScanning;
-        }
-
-        return AppScaffold(
-          title: 'Scan Devices',
-          actions: [
-            if (isScanning)
-              IconButton(
-                icon: const Icon(Icons.stop),
-                onPressed: () => context.read<ScanDevicesCubit>().stopScanning(),
-              )
-            else
-              IconButton(
-                icon: const Icon(Icons.search),
-                onPressed: () => context.read<ScanDevicesCubit>().startScanning(),
-              ),
-          ],
-          body: _buildBody(state),
-        );
-      },
+  Widget buildScreen(BuildContext context, ScanDevicesState state) {
+    return AppScaffold(
+      title: 'Scan Devices',
+      actions: [
+        if (state.isScanning)
+          IconButton(
+            icon: const Icon(Icons.stop),
+            onPressed: () => context.read<ScanDevicesCubit>().stopScanning(),
+          )
+        else
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () => context.read<ScanDevicesCubit>().startScanning(),
+          ),
+      ],
+      body: _buildBody(context, state),
     );
   }
 
-  Widget _buildBody(ScanDevicesState state) {
-    if (state is ScanDevicesInitial) {
-      return const Center(child: Text('Press search to start scanning'));
-    }
-
-    if (state is ScanDevicesLoaded) {
-      if (state.scanResults.isEmpty) {
-        return const AppEmptyWidget(message: 'No devices found');
+  Widget _buildBody(BuildContext context, ScanDevicesState state) {
+    if (state.scanResults.isEmpty) {
+      if (!state.isScanning) {
+        return const Center(child: Text('Press search to start scanning'));
       }
-
-      return ListView.builder(
-        itemCount: state.scanResults.length,
-        itemBuilder: (context, index) {
-          final result = state.scanResults[index];
-          
-          debugPrint('''
-DEBUG_BLE :=>
-Device: ${result.device.platformName} (${result.device.remoteId.str})
-advName: ${result.advertisementData.advName}
-RSSI: ${result.rssi}
-Connectable: ${result.advertisementData.connectable}
-Service UUIDs: ${result.advertisementData.serviceUuids}
-Manufacturer Data: ${result.advertisementData.manufacturerData}
-Service Data: ${result.advertisementData.serviceData}
-TX Power Level: ${result.advertisementData.txPowerLevel}
-''');
-          
-          final device = result.device;
-          final deviceName = device.platformName.isEmpty ? 'Unknown' : device.platformName;
-
-          return ListTile(
-            title: Text(deviceName),
-            subtitle: Text(device.remoteId.str),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text('${result.rssi} dBm'),
-                const SizedBox(width: 8),
-                ElevatedButton(
-                  onPressed: () {
-                    context.read<BluetoothDeviceProvider>().setSelectedDevice(device);
-                    Navigator.pushNamed(context, '/connect');
-                  },
-                  child: const Text('Connect'),
-                ),
-              ],
-            ),
-          );
-        },
-      );
+      return const AppEmptyWidget(message: 'No devices found');
     }
 
-    return const SizedBox.shrink();
+    return ListView.builder(
+      itemCount: state.scanResults.length,
+      itemBuilder: (context, index) {
+        final result = state.scanResults[index];
+        final device = result.device;
+        final deviceName = device.platformName.isEmpty ? 'Unknown' : device.platformName;
+
+        return ListTile(
+          title: Text(deviceName),
+          subtitle: Text(device.remoteId.str),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text('${result.rssi} dBm'),
+              const SizedBox(width: 8),
+              ElevatedButton(
+                onPressed: () {
+                  context.read<BluetoothDeviceProvider>().setSelectedDevice(device);
+                  Navigator.pushNamed(context, '/connect');
+                },
+                child: const Text('Connect'),
+              ),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

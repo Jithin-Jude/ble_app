@@ -1,28 +1,44 @@
-import 'package:equatable/equatable.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import '../../../../../core/presentation/base_state.dart';
+import '../../../../../core/presentation/ui_effect.dart';
 
-abstract class BluetoothPermissionState extends Equatable {
-  const BluetoothPermissionState();
-
-  @override
-  List<Object?> get props => [];
-}
-
-class BluetoothPermissionInitial extends BluetoothPermissionState {}
-
-class BluetoothPermissionLoading extends BluetoothPermissionState {}
-
-class BluetoothPermissionStatus extends BluetoothPermissionState {
+class BluetoothPermissionState extends BaseState {
   final bool isGranted;
   final BluetoothAdapterState adapterState;
-  final String? errorMessage;
 
-  const BluetoothPermissionStatus({
-    required this.isGranted,
-    required this.adapterState,
-    this.errorMessage,
+  const BluetoothPermissionState({
+    super.loading = false,
+    super.effect = const NoEffect(),
+    this.isGranted = false,
+    this.adapterState = BluetoothAdapterState.unknown,
   });
 
+  BluetoothPermissionState copyFromBase(BaseState base) {
+    return copyWithS(
+      loading: base.loading,
+      effect: base.effect,
+    );
+  }
+
+  BluetoothPermissionState copyWithS({
+    bool? loading,
+    UiEffect? effect,
+    bool? isGranted,
+    BluetoothAdapterState? adapterState,
+    bool clearEffect = false,
+  }) {
+    return BluetoothPermissionState(
+      loading: loading ?? this.loading,
+      effect: clearEffect ? const NoEffect() : effect ?? this.effect,
+      isGranted: isGranted ?? this.isGranted,
+      adapterState: adapterState ?? this.adapterState,
+    );
+  }
+
   @override
-  List<Object?> get props => [isGranted, adapterState, errorMessage];
+  List<Object?> get props => [
+        ...super.props,
+        isGranted,
+        adapterState,
+      ];
 }

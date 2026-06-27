@@ -1,38 +1,36 @@
 import 'dart:async';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../../domain/usecase/get_scan_results_usecase.dart';
 import '../../domain/usecase/start_scan_usecase.dart';
 import '../../domain/usecase/stop_scan_usecase.dart';
 import 'scan_devices_state.dart';
 import '../../../../../core/result/result.dart';
+import '../../../../../core/presentation/base_cubit.dart';
+import '../../../../../core/presentation/base_state.dart';
+import '../../../../../core/presentation/ui_effect.dart';
 
-class ScanDevicesCubit extends Cubit<ScanDevicesState> {
+class ScanDevicesCubit extends BaseCubit<ScanDevicesState> {
   final StartScanUseCase startScanUseCase;
   final StopScanUseCase stopScanUseCase;
   final GetScanResultsUseCase getScanResultsUseCase;
 
   StreamSubscription? _scanResultsSubscription;
   StreamSubscription? _isScanningSubscription;
-  
-  List<ScanResult> _currentResults = [];
-  bool _isScanning = false;
 
   ScanDevicesCubit({
     required this.startScanUseCase,
     required this.stopScanUseCase,
     required this.getScanResultsUseCase,
-  }) : super(ScanDevicesInitial());
+  }) : super(const ScanDevicesState());
 
   void init() {
     _isScanningSubscription = FlutterBluePlus.isScanning.listen((isScanning) {
-      _isScanning = isScanning;
-      _emitLoaded();
+      emit(state.copyWithS(isScanning: isScanning));
     });
 
     _scanResultsSubscription = getScanResultsUseCase().listen((results) {
-      _currentResults = _purifyBluetoothScanResults(results);
-      _emitLoaded();
+      final purifiedResults = _purifyBluetoothScanResults(results);
+      emit(state.copyWithS(scanResults: purifiedResults));
     });
   }
 
@@ -74,23 +72,25 @@ class ScanDevicesCubit extends Cubit<ScanDevicesState> {
   Future<void> startScanning() async {
     final result = await startScanUseCase();
     if (result is Failure) {
-      _emitLoaded(errorMessage: result.message);
+      emit(state.copyWithS(effect: ShowErrorSnackBar(result.message)));
     }
   }
 
   Future<void> stopScanning() async {
     final result = await stopScanUseCase();
     if (result is Failure) {
-      _emitLoaded(errorMessage: result.message);
+      emit(state.copyWithS(effect: ShowErrorSnackBar(result.message)));
     }
   }
 
-  void _emitLoaded({String? errorMessage}) {
-    emit(ScanDevicesLoaded(
-      scanResults: List.from(_currentResults),
-      isScanning: _isScanning,
-      errorMessage: errorMessage,
-    ));
+  @override
+  void clearEffect() {
+    emit(state.copyWithS(clearEffect: true));
+  }
+
+  @override
+  ScanDevicesState mapBaseToConcrete(BaseState base) {
+    return state.copyFromBase(base);
   }
 
   @override
