@@ -20,7 +20,16 @@ class ConnectDeviceCubit extends BaseCubit<ConnectDeviceState> {
     required this.connectUseCase,
     required this.disconnectUseCase,
     required this.deviceProvider,
-  }) : super(const ConnectDeviceState());
+  }) : super(const ConnectDeviceState()) {
+    _init();
+  }
+
+  void _init() {
+    final device = deviceProvider.selectedDevice;
+    if (device != null) {
+      _startMonitoring(device);
+    }
+  }
 
   Future<void> connect(BluetoothDevice device) async {
     if (deviceProvider.isAnyDeviceConnected &&

@@ -8,13 +8,17 @@ import '../../../../../core/widgets/app_scaffold.dart';
 import '../../../../../core/widgets/primary_button.dart';
 import '../../../../../core/provider/bluetooth_device_provider.dart';
 import '../../../../../core/presentation/base_screen.dart';
+import '../../../../../core/di/app_container.dart' as di;
 
 class ConnectDeviceScreen extends StatelessWidget {
   const ConnectDeviceScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const _ConnectDeviceScreenView();
+    return BlocProvider(
+      create: (_) => di.sl<ConnectDeviceCubit>(),
+      child: const _ConnectDeviceScreenView(),
+    );
   }
 }
 

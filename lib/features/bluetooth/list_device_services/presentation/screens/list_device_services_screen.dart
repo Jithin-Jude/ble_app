@@ -7,13 +7,17 @@ import '../../../../../core/widgets/app_scaffold.dart';
 import '../../../../../core/widgets/app_error_widget.dart';
 import '../../../../../core/provider/bluetooth_device_provider.dart';
 import '../../../../../core/presentation/base_screen.dart';
+import '../../../../../core/di/app_container.dart' as di;
 
 class ListDeviceServicesScreen extends StatelessWidget {
   const ListDeviceServicesScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const _ListDeviceServicesScreenView();
+    return BlocProvider(
+      create: (_) => di.sl<ListDeviceServicesCubit>(),
+      child: const _ListDeviceServicesScreenView(),
+    );
   }
 }
 

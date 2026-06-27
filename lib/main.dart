@@ -31,8 +31,6 @@ class MyApp extends StatelessWidget {
         providers: [
           BlocProvider(create: (_) => di.sl<BluetoothPermissionCubit>()),
           BlocProvider(create: (_) => di.sl<ScanDevicesCubit>()),
-          BlocProvider(create: (_) => di.sl<ConnectDeviceCubit>()),
-          BlocProvider(create: (_) => di.sl<ListDeviceServicesCubit>()),
         ],
         child: MaterialApp(
           title: 'BLE App Demo',
