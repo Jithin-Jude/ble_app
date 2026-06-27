@@ -31,39 +31,44 @@ class ScanDevicesCubit extends Cubit<ScanDevicesState> {
     });
 
     _scanResultsSubscription = getScanResultsUseCase().listen((results) {
-      final Map<String, ScanResult> uniqueResults = {};
-      final Map<String, String> remoteIdToManufacturerKey = {};
-
-      // First pass: Associate remoteIds with their manufacturer data
-      for (var result in results) {
-        final mData = result.advertisementData.manufacturerData;
-        if (mData.isNotEmpty) {
-          remoteIdToManufacturerKey[result.device.remoteId.str] = mData.toString();
-        }
-      }
-
-      // Second pass: Merge results based on manufacturer data identity
-      for (var result in results) {
-        final remoteId = result.device.remoteId.str;
-        // Use manufacturer data as the primary key, fallback to remoteId
-        final String key = remoteIdToManufacturerKey[remoteId] ?? remoteId;
-
-        if (uniqueResults.containsKey(key)) {
-          if (result.rssi > uniqueResults[key]!.rssi) {
-            uniqueResults[key] = result;
-          }
-        } else {
-          uniqueResults[key] = result;
-        }
-      }
-
-      _currentResults = uniqueResults.values.toList();
-      
-      // Sort by RSSI to show strongest signals at the top
-      _currentResults.sort((a, b) => b.rssi.compareTo(a.rssi));
-
+      _currentResults = _purifyBluetoothScanResults(results);
       _emitLoaded();
     });
+  }
+
+  List<ScanResult> _purifyBluetoothScanResults(List<ScanResult> results) {
+    final Map<String, ScanResult> uniqueResults = {};
+    final Map<String, String> remoteIdToManufacturerKey = {};
+
+    // First pass: Associate remoteIds with their manufacturer data
+    for (var result in results) {
+      final mData = result.advertisementData.manufacturerData;
+      if (mData.isNotEmpty) {
+        remoteIdToManufacturerKey[result.device.remoteId.str] = mData.toString();
+      }
+    }
+
+    // Second pass: Merge results based on manufacturer data identity
+    for (var result in results) {
+      final remoteId = result.device.remoteId.str;
+      // Use manufacturer data as the primary key, fallback to remoteId
+      final String key = remoteIdToManufacturerKey[remoteId] ?? remoteId;
+
+      if (uniqueResults.containsKey(key)) {
+        if (result.rssi > uniqueResults[key]!.rssi) {
+          uniqueResults[key] = result;
+        }
+      } else {
+        uniqueResults[key] = result;
+      }
+    }
+
+    final purifiedResults = uniqueResults.values.toList();
+
+    // Sort by RSSI to show strongest signals at the top
+    purifiedResults.sort((a, b) => b.rssi.compareTo(a.rssi));
+
+    return purifiedResults;
   }
 
   Future<void> startScanning() async {
