@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../cubit/scan_devices_cubit.dart';
 import '../cubit/scan_devices_state.dart';
 import '../../../../../core/widgets/app_scaffold.dart';
@@ -64,6 +65,19 @@ class _ScanDevicesScreenState extends State<ScanDevicesScreen> {
         itemCount: state.scanResults.length,
         itemBuilder: (context, index) {
           final result = state.scanResults[index];
+          
+          debugPrint('''
+DEBUG_BLE :=>
+Device: ${result.device.platformName} (${result.device.remoteId.str})
+advName: ${result.advertisementData.advName}
+RSSI: ${result.rssi}
+Connectable: ${result.advertisementData.connectable}
+Service UUIDs: ${result.advertisementData.serviceUuids}
+Manufacturer Data: ${result.advertisementData.manufacturerData}
+Service Data: ${result.advertisementData.serviceData}
+TX Power Level: ${result.advertisementData.txPowerLevel}
+''');
+          
           final device = result.device;
           final deviceName = device.platformName.isEmpty ? 'Unknown' : device.platformName;
 
