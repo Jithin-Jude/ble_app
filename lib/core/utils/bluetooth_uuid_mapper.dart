@@ -254,16 +254,4 @@ class BluetoothUuidMapper {
     final normalized = normalize(uuid);
     return _characteristics[normalized] ?? 'Manufacturer Characteristic';
   }
-
-  /// Returns true if the Service UUID is a standard Bluetooth SIG UUID.
-  static bool isStandardService(String uuid) {
-    final normalized = normalize(uuid);
-    return _services.containsKey(normalized);
-  }
-
-  /// Returns true if the Characteristic UUID is a standard Bluetooth SIG UUID.
-  static bool isStandardCharacteristic(String uuid) {
-    final normalized = normalize(uuid);
-    return _characteristics.containsKey(normalized);
-  }
 }

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../domain/entity/characteristic_entity.dart';
 import '../cubit/list_device_services_cubit.dart';
-import '../../../../../core/bluetooth/bluetooth_value_formatter.dart';
+import '../../../../../core/utils/bluetooth_value_formatter.dart';
 
 enum WriteInputType { utf8, hex }
 

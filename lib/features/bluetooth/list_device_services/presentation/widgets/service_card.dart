@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/bluetooth/bluetooth_uuid_mapper.dart';
+import '../../../../../core/utils/bluetooth_uuid_mapper.dart';
 import '../../domain/entity/bluetooth_service_entity.dart';
 import 'characteristic_card.dart';
 
