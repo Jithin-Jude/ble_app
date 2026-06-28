@@ -59,8 +59,9 @@ class _ScanDevicesScreenView extends BaseScreen<ScanDevicesCubit, ScanDevicesSta
       return const AppEmptyWidget(message: 'No devices found');
     }
 
-    return ListView.builder(
+    return ListView.separated(
       itemCount: state.scanResults.length,
+      separatorBuilder: (context, index) => const Divider(height: 1),
       itemBuilder: (context, index) {
         final result = state.scanResults[index];
         final device = result.device;
