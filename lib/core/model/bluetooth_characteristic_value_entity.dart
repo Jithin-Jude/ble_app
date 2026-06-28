@@ -1,5 +1,5 @@
 /// A model representing a decoded Bluetooth characteristic value.
-class BluetoothDecodedValue {
+class BluetoothCharacteristicValueEntity {
   /// The formatted value to display to the user.
   final String displayValue;
 
@@ -12,7 +12,7 @@ class BluetoothDecodedValue {
   /// Whether the value was successfully decoded using a standard decoder.
   final bool isDecoded;
 
-  const BluetoothDecodedValue({
+  const BluetoothCharacteristicValueEntity({
     required this.displayValue,
     this.name,
     this.unit,

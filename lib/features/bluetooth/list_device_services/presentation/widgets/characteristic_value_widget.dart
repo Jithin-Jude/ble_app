@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../../core/bluetooth/bluetooth_value_formatter.dart';
-import '../../../../../core/bluetooth/bluetooth_decoded_value.dart';
+import '../../../../../core/model/bluetooth_characteristic_value_entity.dart';
 
 class CharacteristicValueWidget extends StatelessWidget {
   final String? uuid;

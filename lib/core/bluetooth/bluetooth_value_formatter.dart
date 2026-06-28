@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'bluetooth_uuid_mapper.dart';
-import 'bluetooth_decoded_value.dart';
+import '../model/bluetooth_characteristic_value_entity.dart';
 
 /// A utility class for formatting Bluetooth characteristic values.
 class BluetoothValueFormatter {
   /// Decodes a characteristic value based on its UUID.
-  static BluetoothDecodedValue decode(String uuid, List<int> value) {
+  static BluetoothCharacteristicValueEntity decode(String uuid, List<int> value) {
     if (value.isEmpty) {
-      return const BluetoothDecodedValue(
+      return const BluetoothCharacteristicValueEntity(
         displayValue: 'No data',
         isDecoded: false,
       );
@@ -38,7 +38,7 @@ class BluetoothValueFormatter {
       case '2A2B': // Current Time
         return _decodeCurrentTime(value, name);
       default:
-        return BluetoothDecodedValue(
+        return BluetoothCharacteristicValueEntity(
           displayValue: formatHex(value),
           name: name,
           isDecoded: false,
@@ -46,9 +46,9 @@ class BluetoothValueFormatter {
     }
   }
 
-  static BluetoothDecodedValue _decodeBatteryLevel(List<int> value, String name) {
+  static BluetoothCharacteristicValueEntity _decodeBatteryLevel(List<int> value, String name) {
     if (value.isEmpty) return _fallback(value, name);
-    return BluetoothDecodedValue(
+    return BluetoothCharacteristicValueEntity(
       displayValue: value[0].toString(),
       unit: '%',
       name: name,
@@ -56,15 +56,15 @@ class BluetoothValueFormatter {
     );
   }
 
-  static BluetoothDecodedValue _decodeString(List<int> value, String name) {
-    return BluetoothDecodedValue(
+  static BluetoothCharacteristicValueEntity _decodeString(List<int> value, String name) {
+    return BluetoothCharacteristicValueEntity(
       displayValue: formatUtf8(value),
       name: name,
       isDecoded: true,
     );
   }
 
-  static BluetoothDecodedValue _decodeHeartRate(List<int> value, String name) {
+  static BluetoothCharacteristicValueEntity _decodeHeartRate(List<int> value, String name) {
     if (value.isEmpty) return _fallback(value, name);
 
     final flags = value[0];
@@ -80,7 +80,7 @@ class BluetoothValueFormatter {
       heartRate = value[1];
     }
 
-    return BluetoothDecodedValue(
+    return BluetoothCharacteristicValueEntity(
       displayValue: heartRate.toString(),
       unit: ' BPM',
       name: name,
@@ -88,7 +88,7 @@ class BluetoothValueFormatter {
     );
   }
 
-  static BluetoothDecodedValue _decodeWeight(List<int> value, String name) {
+  static BluetoothCharacteristicValueEntity _decodeWeight(List<int> value, String name) {
     if (value.length < 3) return _fallback(value, name);
 
     final flags = value[0];
@@ -107,7 +107,7 @@ class BluetoothValueFormatter {
       unit = ' kg';
     }
 
-    return BluetoothDecodedValue(
+    return BluetoothCharacteristicValueEntity(
       displayValue: weight.toStringAsFixed(2),
       unit: unit,
       name: name,
@@ -115,14 +115,14 @@ class BluetoothValueFormatter {
     );
   }
 
-  static BluetoothDecodedValue _decodeTemperature(List<int> value, String name) {
+  static BluetoothCharacteristicValueEntity _decodeTemperature(List<int> value, String name) {
     if (value.length < 2) return _fallback(value, name);
 
     final tempRaw = ByteData.sublistView(Uint8List.fromList(value))
         .getInt16(0, Endian.little);
     final temperature = tempRaw * 0.01;
 
-    return BluetoothDecodedValue(
+    return BluetoothCharacteristicValueEntity(
       displayValue: temperature.toStringAsFixed(1),
       unit: ' °C',
       name: name,
@@ -130,7 +130,7 @@ class BluetoothValueFormatter {
     );
   }
 
-  static BluetoothDecodedValue _decodeCurrentTime(List<int> value, String name) {
+  static BluetoothCharacteristicValueEntity _decodeCurrentTime(List<int> value, String name) {
     if (value.length < 7) return _fallback(value, name);
 
     final data = ByteData.sublistView(Uint8List.fromList(value));
@@ -149,15 +149,15 @@ class BluetoothValueFormatter {
     final dateStr = '$year-${month.toString().padLeft(2, '0')}-${day.toString().padLeft(2, '0')}';
     final timeStr = '${hour.toString().padLeft(2, '0')}:${minute.toString().padLeft(2, '0')}:${second.toString().padLeft(2, '0')}';
 
-    return BluetoothDecodedValue(
+    return BluetoothCharacteristicValueEntity(
       displayValue: '$dateStr $timeStr',
       name: name,
       isDecoded: true,
     );
   }
 
-  static BluetoothDecodedValue _fallback(List<int> value, String name) {
-    return BluetoothDecodedValue(
+  static BluetoothCharacteristicValueEntity _fallback(List<int> value, String name) {
+    return BluetoothCharacteristicValueEntity(
       displayValue: formatHex(value),
       name: name,
       isDecoded: false,
