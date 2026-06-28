@@ -42,29 +42,32 @@ class _PermissionScreenView extends BaseScreen<BluetoothPermissionCubit, Bluetoo
     }
 
     if (state.adapterState != BluetoothAdapterState.on && !state.loading) {
-      return Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Icon(Icons.bluetooth_disabled, size: 64, color: Colors.orange),
-            const SizedBox(height: 16),
-            Text(
-              'Bluetooth is ${state.adapterState.toString().split('.').last.toUpperCase()}',
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Please turn on Bluetooth to continue.',
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            PrimaryButton(
-              label: 'Retry',
-              onPressed: () {
-                 context.read<BluetoothPermissionCubit>().checkAndRequestPermissions();
-              },
-            ),
-          ],
+      return Padding(
+        padding: const EdgeInsets.all(24.0),
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.bluetooth_disabled, size: 64, color: Colors.orange),
+              const SizedBox(height: 16),
+              Text(
+                'Bluetooth is ${state.adapterState.toString().split('.').last.toUpperCase()}',
+                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Please turn on Bluetooth to continue.',
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 24),
+              PrimaryButton(
+                label: 'Retry',
+                onPressed: () {
+                   context.read<BluetoothPermissionCubit>().checkAndRequestPermissions();
+                },
+              ),
+            ],
+          ),
         ),
       );
     }

@@ -77,7 +77,7 @@ class _ConnectDeviceScreenView extends BaseScreen<ConnectDeviceCubit, ConnectDev
             const SizedBox(height: 24),
 
             // Pairing Section
-            const Text('Pairing (Android Only)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Text('Manual Pairing (Android Only)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             const Divider(),
             Row(
               children: [

@@ -17,26 +17,31 @@ class BluetoothPermissionRemoteDataSourceImpl implements BluetoothPermissionRemo
   @override
   Future<bool> requestPermissions() async {
     if (Platform.isAndroid) {
-      // Handle Android 12+ (API 31+)
-      if (await Permission.bluetoothScan.status.isRestricted || 
-          await Permission.bluetoothConnect.status.isRestricted) {
-          // Some devices might need this check, but usually we just request.
-      }
-
-      Map<Permission, PermissionStatus> statuses = await [
+      // Step 1: Bluetooth permissions
+      final bluetoothStatuses = await [
         Permission.bluetoothScan,
         Permission.bluetoothConnect,
         Permission.bluetoothAdvertise,
-        Permission.location,
       ].request();
 
-      return statuses.values.every((status) => status.isGranted);
-    } else if (Platform.isIOS) {
-      // iOS permissions are usually handled by the system when the app tries to use the API,
-      // but we can request bluetooth permission explicitly.
-      PermissionStatus status = await Permission.bluetooth.request();
-      return status.isGranted;
+      final bluetoothGranted =
+      bluetoothStatuses.values.every((status) => status.isGranted);
+
+      if (!bluetoothGranted) {
+        return false;
+      }
+
+      // Step 2: Location permission
+      final locationStatus = await Permission.location.request();
+
+      return locationStatus.isGranted;
     }
+
+    if (Platform.isIOS) {
+      final bluetoothStatus = await Permission.bluetooth.request();
+      return bluetoothStatus.isGranted;
+    }
+
     return true;
   }
 
