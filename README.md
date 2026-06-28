@@ -7,9 +7,9 @@ The application currently supports:
 - Bluetooth permission handling
 - BLE device scanning
 - Connect / Disconnect
-- Android Pair / Unpair (Native Method Channel)
-- Service Discovery
-- Characteristic Discovery
+- Pair / Unpair (Native Method Channel)
+- Display Connected Device Services
+- Display Connected Device Characteristics
 - Read Characteristics
 - Write Characteristics
 - UUID Mapping
