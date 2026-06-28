@@ -121,9 +121,43 @@ Some peripherals broadcast multiple advertisements simultaneously, resulting in 
 
 For example, Galaxy Watch 4 may advertise multiple packets using different random MAC addresses and advertising payloads.
 
-To improve the scanning experience, all scan results are processed through:
+To improve the scanning experience, all scan results are processed through `_purifyBluetoothScanResults()`.
+```dart
+  List<ScanResult> _purifyBluetoothScanResults(List<ScanResult> results) {
+    final Map<String, ScanResult> uniqueResults = {};
+    final Map<String, String> remoteIdToManufacturerKey = {};
 
-`_purifyBluetoothScanResults()`
+    // First pass: Associate remoteIds with their manufacturer data
+    for (var result in results) {
+      final mData = result.advertisementData.manufacturerData;
+      if (mData.isNotEmpty) {
+        remoteIdToManufacturerKey[result.device.remoteId.str] = mData.toString();
+      }
+    }
+
+    // Second pass: Merge results based on manufacturer data identity
+    for (var result in results) {
+      final remoteId = result.device.remoteId.str;
+      // Use manufacturer data as the primary key, fallback to remoteId
+      final String key = remoteIdToManufacturerKey[remoteId] ?? remoteId;
+
+      if (uniqueResults.containsKey(key)) {
+        if (result.rssi > uniqueResults[key]!.rssi) {
+          uniqueResults[key] = result;
+        }
+      } else {
+        uniqueResults[key] = result;
+      }
+    }
+
+    final purifiedResults = uniqueResults.values.toList();
+
+    // Sort by RSSI to show strongest signals at the top
+    purifiedResults.sort((a, b) => b.rssi.compareTo(a.rssi));
+
+    return purifiedResults;
+  }
+```
 
 This method:
 
@@ -149,25 +183,16 @@ A reusable BluetoothUuidMapper was implemented to map Bluetooth SIG standard UUI
 
 Examples:
 ```
-180F
-
-↓
-
-Battery Service
+180F -> Battery Service
 ```
 
 ```
-2A19
-
-↓
-
-Battery Level
+2A19 -> Battery Level
 ```
 
-Manufacturer-specific UUIDs are intentionally left unmapped and displayed as:
+Proprietary manufacturer-specific UUIDs are intentionally left unmapped and displayed as:
 
-Manufacturer Service
-Manufacturer Characteristic
+"Manufacturer Service" and "Manufacturer Characteristic"
 
 while still presenting the raw UUID for inspection.
 
@@ -176,24 +201,22 @@ while still presenting the raw UUID for inspection.
 Reading a characteristic only returns raw bytes.
 
 For example:
-```
-[51]
-```
-The byte array itself provides very little information.
 
-A reusable BluetoothValueFormatter was introduced to decode well-known Bluetooth SIG characteristics into meaningful values.
+
+`[51]`
+
+
+The byte array itself provides very little information. A reusable BluetoothValueFormatter was introduced to decode well-known Bluetooth SIG characteristics into meaningful values.
 
 Example:
 ```
 Battery Level
 
-Raw Value
-
-[51]
+[51] (Raw Value)
 
 ↓
 
-51%
+51% (Properly formated)
 ```
 Other standard characteristics such as Device Name, Manufacturer Name and Model Number are decoded into readable strings.
 
@@ -311,12 +334,12 @@ feature
 └── di
 ```
 # References
-* FlutterBluePlus
-* permission_handler
-* Android Bluetooth Low Energy Documentation
-* Apple CoreBluetooth Documentation
-* Bluetooth SIG GATT Specifications
-* Bluetooth SIG Assigned Numbers
+* [FlutterBluePlus](https://pub.dev/packages/flutter_blue_plus)
+* [permission_handler](https://pub.dev/packages/permission_handler)
+* [Android Bluetooth Low Energy Documentation](https://developer.android.com/develop/connectivity/bluetooth/ble/ble-overview)
+* [Apple CoreBluetooth Documentation](https://developer.apple.com/documentation/corebluetooth/)
+* [Bluetooth SIG GATT Specifications](https://btprodspecificationrefs.blob.core.windows.net/gatt-specification-supplement/GATT_Specification_Supplement.pdf)
+* [Bluetooth SIG Assigned Numbers](https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Assigned_Numbers/out/en/Assigned_Numbers.pdf)
 # Key Learnings
 
 Developing this project provided practical experience with:
