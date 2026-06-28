@@ -5,6 +5,7 @@ import 'characteristic_model.dart';
 class BluetoothServiceModel extends BluetoothServiceEntity {
   const BluetoothServiceModel({
     required super.uuid,
+    required super.deviceId,
     required super.characteristicsCount,
     required super.characteristics,
   });
@@ -12,6 +13,7 @@ class BluetoothServiceModel extends BluetoothServiceEntity {
   factory BluetoothServiceModel.fromBluetoothService(BluetoothService service) {
     return BluetoothServiceModel(
       uuid: service.uuid.str,
+      deviceId: service.remoteId.str,
       characteristicsCount: service.characteristics.length,
       characteristics: service.characteristics
           .map((c) => CharacteristicModel.fromBluetoothCharacteristic(c))

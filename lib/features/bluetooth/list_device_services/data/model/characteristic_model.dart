@@ -4,6 +4,8 @@ import '../../domain/entity/characteristic_entity.dart';
 class CharacteristicModel extends CharacteristicEntity {
   const CharacteristicModel({
     required super.uuid,
+    required super.serviceUuid,
+    required super.deviceId,
     required super.canRead,
     required super.canWrite,
     required super.canWriteWithoutResponse,
@@ -18,6 +20,8 @@ class CharacteristicModel extends CharacteristicEntity {
       BluetoothCharacteristic characteristic) {
     return CharacteristicModel(
       uuid: characteristic.uuid.str,
+      serviceUuid: characteristic.serviceUuid.str,
+      deviceId: characteristic.remoteId.str,
       canRead: characteristic.properties.read,
       canWrite: characteristic.properties.write,
       canWriteWithoutResponse: characteristic.properties.writeWithoutResponse,

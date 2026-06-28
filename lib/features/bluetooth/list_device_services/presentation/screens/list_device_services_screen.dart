@@ -22,14 +22,17 @@ class ListDeviceServicesScreen extends StatelessWidget {
   }
 }
 
-class _ListDeviceServicesScreenView extends BaseScreen<ListDeviceServicesCubit, ListDeviceServicesState> {
+class _ListDeviceServicesScreenView
+    extends BaseScreen<ListDeviceServicesCubit, ListDeviceServicesState> {
   const _ListDeviceServicesScreenView();
 
   @override
   void onInitState(BuildContext context) {
     final device = context.read<BluetoothDeviceProvider>().connectedDevice;
     if (device != null) {
-      context.read<ListDeviceServicesCubit>().discoverServices(device);
+      context
+          .read<ListDeviceServicesCubit>()
+          .discoverServices(device.remoteId.str);
     }
   }
 
@@ -43,15 +46,17 @@ class _ListDeviceServicesScreenView extends BaseScreen<ListDeviceServicesCubit, 
 
   Widget _buildBody(BuildContext context, ListDeviceServicesState state) {
     if (state.services.isEmpty && !state.loading) {
-       return AppErrorWidget(
-          message: 'No services discovered',
-          onRetry: () {
-            final device = context.read<BluetoothDeviceProvider>().connectedDevice;
-            if (device != null) {
-              context.read<ListDeviceServicesCubit>().discoverServices(device);
-            }
-          },
-        );
+      return AppErrorWidget(
+        message: 'No services discovered',
+        onRetry: () {
+          final device = context.read<BluetoothDeviceProvider>().connectedDevice;
+          if (device != null) {
+            context
+                .read<ListDeviceServicesCubit>()
+                .discoverServices(device.remoteId.str);
+          }
+        },
+      );
     }
 
     return ListView.builder(

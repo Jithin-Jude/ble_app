@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../../../../core/bluetooth/bluetooth_uuid_mapper.dart';
 import '../../domain/entity/characteristic_entity.dart';
 import 'characteristic_property_row.dart';
+import 'characteristic_actions.dart';
+import 'characteristic_value_widget.dart';
 
 class CharacteristicCard extends StatelessWidget {
   final CharacteristicEntity characteristic;
@@ -24,50 +26,47 @@ class CharacteristicCard extends StatelessWidget {
               BluetoothUuidMapper.getCharacteristicName(characteristic.uuid),
               style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
-            const SizedBox(height: 8),
-            const Text('UUID:'),
+            const SizedBox(height: 4),
+            const Text(
+              'UUID',
+              style: TextStyle(fontSize: 12, color: Colors.grey),
+            ),
             SelectableText(
               characteristic.uuid,
               style: const TextStyle(fontSize: 12, color: Colors.grey),
             ),
-            const Divider(),
+            const SizedBox(height: 12),
             const Text(
               'Properties',
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
-            const SizedBox(height: 8),
-            CharacteristicPropertyRow(
-              label: 'Read',
-              isSupported: characteristic.canRead,
+            const SizedBox(height: 4),
+            Wrap(
+              spacing: 16,
+              runSpacing: 4,
+              children: [
+                CharacteristicPropertyRow(
+                  label: 'Read',
+                  isSupported: characteristic.canRead,
+                ),
+                CharacteristicPropertyRow(
+                  label: 'Write',
+                  isSupported: characteristic.canWrite ||
+                      characteristic.canWriteWithoutResponse,
+                ),
+                CharacteristicPropertyRow(
+                  label: 'Notify',
+                  isSupported: characteristic.canNotify,
+                ),
+                CharacteristicPropertyRow(
+                  label: 'Indicate',
+                  isSupported: characteristic.canIndicate,
+                ),
+              ],
             ),
-            CharacteristicPropertyRow(
-              label: 'Write',
-              isSupported: characteristic.canWrite,
-            ),
-            CharacteristicPropertyRow(
-              label: 'Write Without Response',
-              isSupported: characteristic.canWriteWithoutResponse,
-            ),
-            CharacteristicPropertyRow(
-              label: 'Notify',
-              isSupported: characteristic.canNotify,
-            ),
-            CharacteristicPropertyRow(
-              label: 'Indicate',
-              isSupported: characteristic.canIndicate,
-            ),
-            CharacteristicPropertyRow(
-              label: 'Broadcast',
-              isSupported: characteristic.canBroadcast,
-            ),
-            CharacteristicPropertyRow(
-              label: 'Signed Write',
-              isSupported: characteristic.canAuthenticateSignedWrites,
-            ),
-            CharacteristicPropertyRow(
-              label: 'Extended Properties',
-              isSupported: characteristic.hasExtendedProperties,
-            ),
+            CharacteristicValueWidget(value: characteristic.value),
+            const SizedBox(height: 16),
+            CharacteristicActions(characteristic: characteristic),
           ],
         ),
       ),

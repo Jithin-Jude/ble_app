@@ -52,4 +52,32 @@ class BluetoothManager {
   Stream<BluetoothConnectionState> connectionState(BluetoothDevice device) {
     return device.connectionState;
   }
+
+  /// Reads the value of a characteristic.
+  Future<List<int>> readCharacteristic({
+    required String deviceId,
+    required String serviceUuid,
+    required String characteristicUuid,
+  }) async {
+    final device = BluetoothDevice.fromId(deviceId);
+    final services = await device.discoverServices();
+    final service = services.firstWhere((s) => s.uuid.str == serviceUuid);
+    final characteristic = service.characteristics.firstWhere((c) => c.uuid.str == characteristicUuid);
+    return await characteristic.read();
+  }
+
+  /// Writes a value to a characteristic.
+  Future<void> writeCharacteristic({
+    required String deviceId,
+    required String serviceUuid,
+    required String characteristicUuid,
+    required List<int> value,
+    bool withResponse = true,
+  }) async {
+    final device = BluetoothDevice.fromId(deviceId);
+    final services = await device.discoverServices();
+    final service = services.firstWhere((s) => s.uuid.str == serviceUuid);
+    final characteristic = service.characteristics.firstWhere((c) => c.uuid.str == characteristicUuid);
+    await characteristic.write(value, withoutResponse: !withResponse);
+  }
 }
