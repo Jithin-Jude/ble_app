@@ -2,6 +2,10 @@ import 'dart:async';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../../domain/usecase/connect_device_usecase.dart';
 import '../../domain/usecase/disconnect_device_usecase.dart';
+import '../../domain/usecase/get_pair_state_stream_usecase.dart';
+import '../../domain/usecase/get_pair_state_usecase.dart';
+import '../../domain/usecase/pair_device_usecase.dart';
+import '../../domain/usecase/unpair_device_usecase.dart';
 import 'connect_device_state.dart';
 import '../../../../../core/result/result.dart';
 import '../../../../../core/provider/bluetooth_device_provider.dart';
@@ -13,8 +17,11 @@ import '../../../../../core/bluetooth/bluetooth_pair_manager.dart';
 class ConnectDeviceCubit extends BaseCubit<ConnectDeviceState> {
   final ConnectDeviceUseCase connectUseCase;
   final DisconnectDeviceUseCase disconnectUseCase;
+  final GetPairStateUseCase getPairStateUseCase;
+  final PairDeviceUseCase pairDeviceUseCase;
+  final UnPairDeviceUseCase unPairDeviceUseCase;
+  final GetPairStateStreamUseCase getPairStateStreamUseCase;
   final BluetoothDeviceProvider deviceProvider;
-  final BluetoothPairManager pairManager;
 
   StreamSubscription? _connectionStateSubscription;
   StreamSubscription? _pairStateSubscription;
@@ -22,8 +29,11 @@ class ConnectDeviceCubit extends BaseCubit<ConnectDeviceState> {
   ConnectDeviceCubit({
     required this.connectUseCase,
     required this.disconnectUseCase,
+    required this.getPairStateUseCase,
+    required this.pairDeviceUseCase,
+    required this.unPairDeviceUseCase,
+    required this.getPairStateStreamUseCase,
     required this.deviceProvider,
-    required this.pairManager,
   }) : super(const ConnectDeviceState()) {
     _init();
   }
@@ -76,7 +86,7 @@ class ConnectDeviceCubit extends BaseCubit<ConnectDeviceState> {
   }
 
   Future<void> loadPairState(String macAddress) async {
-    final result = await pairManager.getPairState(macAddress);
+    final result = await getPairStateUseCase(macAddress);
     if (result is Success<PairState>) {
       emit(state.copyWithS(pairState: result.data));
     }
@@ -84,7 +94,7 @@ class ConnectDeviceCubit extends BaseCubit<ConnectDeviceState> {
 
   Future<void> pair(String macAddress) async {
     emit(state.copyWithS(pairing: true));
-    final result = await pairManager.pair(macAddress);
+    final result = await pairDeviceUseCase(macAddress);
     emit(state.copyWithS(pairing: false));
     if (result is Failure) {
       emit(state.copyWithS(effect: ShowErrorSnackBar(result.toString())));
@@ -93,7 +103,7 @@ class ConnectDeviceCubit extends BaseCubit<ConnectDeviceState> {
 
   Future<void> unPair(String macAddress) async {
     emit(state.copyWithS(unPairing: true));
-    final result = await pairManager.unPair(macAddress);
+    final result = await unPairDeviceUseCase(macAddress);
     emit(state.copyWithS(unPairing: false));
     if (result is Failure) {
       emit(state.copyWithS(effect: ShowErrorSnackBar(result.toString())));
@@ -109,7 +119,7 @@ class ConnectDeviceCubit extends BaseCubit<ConnectDeviceState> {
 
   void _startMonitoringPairState() {
     _pairStateSubscription?.cancel();
-    _pairStateSubscription = pairManager.pairStateStream.listen((pairState) {
+    _pairStateSubscription = getPairStateStreamUseCase().listen((pairState) {
       emit(state.copyWithS(pairState: pairState));
     });
   }
