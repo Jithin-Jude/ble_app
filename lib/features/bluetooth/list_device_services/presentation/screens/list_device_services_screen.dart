@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:provider/provider.dart';
 import '../cubit/list_device_services_cubit.dart';
 import '../cubit/list_device_services_state.dart';
+import '../widgets/service_card.dart';
 import '../../../../../core/widgets/app_scaffold.dart';
 import '../../../../../core/widgets/app_error_widget.dart';
 import '../../../../../core/provider/bluetooth_device_provider.dart';
@@ -57,11 +58,7 @@ class _ListDeviceServicesScreenView extends BaseScreen<ListDeviceServicesCubit, 
       itemCount: state.services.length,
       itemBuilder: (context, index) {
         final service = state.services[index];
-        return ListTile(
-          title: Text('Service UUID: ${service.uuid}'),
-          subtitle: Text('Characteristics: ${service.characteristicsCount}'),
-          leading: const Icon(Icons.settings_bluetooth),
-        );
+        return ServiceCard(service: service);
       },
     );
   }
