@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/bluetooth/bluetooth_uuid_mapper.dart';
 import '../../domain/entity/characteristic_entity.dart';
 import 'characteristic_property_row.dart';
 
@@ -19,9 +20,9 @@ class CharacteristicCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Characteristic',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+            Text(
+              BluetoothUuidMapper.getCharacteristicName(characteristic.uuid),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
             ),
             const SizedBox(height: 8),
             const Text('UUID:'),
