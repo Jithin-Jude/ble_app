@@ -11,6 +11,7 @@ import 'features/bluetooth/connect_device/presentation/cubit/connect_device_cubi
 import 'features/bluetooth/connect_device/presentation/screens/connect_device_screen.dart';
 import 'features/bluetooth/list_device_services/presentation/cubit/list_device_services_cubit.dart';
 import 'features/bluetooth/list_device_services/presentation/screens/list_device_services_screen.dart';
+import 'core/theme/ble_app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,16 +36,7 @@ class MyApp extends StatelessWidget {
         child: MaterialApp(
           title: 'BLE App Demo',
           themeMode: ThemeMode.dark,
-          darkTheme: ThemeData(
-            useMaterial3: true,
-            brightness: Brightness.dark,
-            primarySwatch: Colors.blue,
-            elevatedButtonTheme: ElevatedButtonThemeData(
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
-            ),
-          ),
+          darkTheme: BleAppTheme.darkTheme,
           initialRoute: '/',
           routes: {
             '/': (context) => const PermissionScreen(),
