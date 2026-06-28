@@ -1,4 +1,5 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/result/result.dart';
 import '../../domain/entity/bluetooth_permission_entity.dart';
 import '../../domain/repository/bluetooth_permission_repository.dart';
@@ -16,8 +17,8 @@ class BluetoothPermissionRepositoryImpl implements BluetoothPermissionRepository
       final isGranted = await remoteDataSource.requestPermissions();
       return Success(
         BluetoothPermissionModel.fromBool(isGranted),
-        statusCode: 200,
-        message: 'Success',
+        statusCode: AppConstants.statusCodeSuccess,
+        message: AppStrings.success,
       );
     } catch (e) {
       return Failure(message: e.toString());

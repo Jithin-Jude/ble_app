@@ -7,6 +7,7 @@ import '../../domain/usecase/get_pair_state_usecase.dart';
 import '../../domain/usecase/pair_device_usecase.dart';
 import '../../domain/usecase/unpair_device_usecase.dart';
 import 'connect_device_state.dart';
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/result/result.dart';
 import '../../../../../core/provider/bluetooth_device_provider.dart';
 import '../../../../../core/presentation/base_cubit.dart';
@@ -51,8 +52,7 @@ class ConnectDeviceCubit extends BaseCubit<ConnectDeviceState> {
     if (deviceProvider.isAnyDeviceConnected &&
         deviceProvider.connectedDevice?.remoteId != device.remoteId) {
       emit(state.copyWithS(
-        effect: ShowErrorSnackBar(
-            "A device is already connected. Please disconnect it before connecting to a new one."),
+        effect: const ShowErrorSnackBar(AppStrings.deviceAlreadyConnected),
       ));
       return;
     }

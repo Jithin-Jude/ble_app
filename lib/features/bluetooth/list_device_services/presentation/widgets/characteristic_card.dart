@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/bluetooth/bluetooth_uuid_mapper.dart';
 import '../../domain/entity/characteristic_entity.dart';
 import 'characteristic_property_row.dart';
@@ -28,7 +29,7 @@ class CharacteristicCard extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             const Text(
-              'UUID',
+              AppStrings.uuid,
               style: TextStyle(fontSize: 12, color: Colors.grey),
             ),
             SelectableText(
@@ -37,7 +38,7 @@ class CharacteristicCard extends StatelessWidget {
             ),
             const SizedBox(height: 12),
             const Text(
-              'Properties',
+              AppStrings.properties,
               style: TextStyle(fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 4),
@@ -46,20 +47,20 @@ class CharacteristicCard extends StatelessWidget {
               runSpacing: 4,
               children: [
                 CharacteristicPropertyRow(
-                  label: 'Read',
+                  label: AppStrings.read,
                   isSupported: characteristic.canRead,
                 ),
                 CharacteristicPropertyRow(
-                  label: 'Write',
+                  label: AppStrings.write,
                   isSupported: characteristic.canWrite ||
                       characteristic.canWriteWithoutResponse,
                 ),
                 CharacteristicPropertyRow(
-                  label: 'Notify',
+                  label: AppStrings.notify,
                   isSupported: characteristic.canNotify,
                 ),
                 CharacteristicPropertyRow(
-                  label: 'Indicate',
+                  label: AppStrings.indicate,
                   isSupported: characteristic.canIndicate,
                 ),
               ],

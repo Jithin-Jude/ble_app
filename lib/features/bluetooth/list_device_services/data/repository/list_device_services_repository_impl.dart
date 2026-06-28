@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/result/result.dart';
 import '../../domain/entity/bluetooth_service_entity.dart';
 import '../../domain/repository/list_device_services_repository.dart';
@@ -20,8 +21,8 @@ class ListDeviceServicesRepositoryImpl implements ListDeviceServicesRepository {
         services
             .map((s) => BluetoothServiceModel.fromBluetoothService(s))
             .toList(),
-        statusCode: 200,
-        message: 'Services discovered successfully',
+        statusCode: AppConstants.statusCodeSuccess,
+        message: AppStrings.servicesDiscovered,
       );
     } on FlutterBluePlusException catch (e) {
       return Failure(
@@ -47,8 +48,8 @@ class ListDeviceServicesRepositoryImpl implements ListDeviceServicesRepository {
       );
       return Success(
         value,
-        statusCode: 200,
-        message: 'Characteristic read successfully',
+        statusCode: AppConstants.statusCodeSuccess,
+        message: AppStrings.characteristicRead,
       );
     } on FlutterBluePlusException catch (e) {
       return Failure(
@@ -78,8 +79,8 @@ class ListDeviceServicesRepositoryImpl implements ListDeviceServicesRepository {
       );
       return const Success(
         null,
-        statusCode: 200,
-        message: 'Characteristic write successful',
+        statusCode: AppConstants.statusCodeSuccess,
+        message: AppStrings.characteristicWrite,
       );
     } on FlutterBluePlusException catch (e) {
       return Failure(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/bluetooth/bluetooth_uuid_mapper.dart';
 import '../../domain/entity/bluetooth_service_entity.dart';
 import 'characteristic_card.dart';
@@ -22,7 +23,7 @@ class ServiceCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const SizedBox(height: 4),
-          const Text('UUID:'),
+          const Text('${AppStrings.uuid}:'),
           SelectableText(
             service.uuid,
             style: const TextStyle(fontSize: 12, color: Colors.grey),

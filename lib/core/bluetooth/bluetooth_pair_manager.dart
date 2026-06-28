@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:flutter/services.dart';
+import '../constants/app_constants.dart';
 import '../result/result.dart';
 
 /// Enum representing the pairing state of a Bluetooth device.
@@ -14,8 +15,8 @@ enum PairState {
 /// Manager for handling Bluetooth pairing operations via Method Channels.
 /// This is independent of FlutterBluePlus and supports Android native pairing.
 class BluetoothPairManager {
-  static const MethodChannel _methodChannel = MethodChannel('com.jithin.ble/pairing');
-  static const EventChannel _eventChannel = EventChannel('com.jithin.ble/pairing/events');
+  static const MethodChannel _methodChannel = MethodChannel(AppConstants.pairingMethodChannel);
+  static const EventChannel _eventChannel = EventChannel(AppConstants.pairingEventChannel);
 
   /// Stream to monitor bond state changes from Android.
   Stream<PairState> get pairStateStream {
@@ -30,13 +31,13 @@ class BluetoothPairManager {
   /// Returns the current pairing state of a device by its MAC address.
   Future<Result<PairState>> getPairState(String macAddress) async {
     if (!Platform.isAndroid) {
-      return const Failure(message: 'iOS manages pairing via the system settings.');
+      return const Failure(message: AppStrings.iosPairingMessage);
     }
     try {
-      final int result = await _methodChannel.invokeMethod('getPairState', {'macAddress': macAddress});
-      return Success(_mapIntToPairState(result), statusCode: 200, message: 'Success');
+      final int result = await _methodChannel.invokeMethod(AppConstants.methodGetPairState, {AppConstants.argMacAddress: macAddress});
+      return Success(_mapIntToPairState(result), statusCode: AppConstants.statusCodeSuccess, message: AppStrings.success);
     } on PlatformException catch (e) {
-      return Failure(message: e.message ?? 'Failed to get pair state');
+      return Failure(message: e.message ?? AppStrings.failedToGetPairState);
     } catch (e) {
       return Failure(message: e.toString());
     }
@@ -45,13 +46,13 @@ class BluetoothPairManager {
   /// Initiates pairing with a device.
   Future<Result<bool>> pair(String macAddress) async {
     if (!Platform.isAndroid) {
-      return const Failure(message: 'Bluetooth pairing is managed by iOS and cannot be initiated programmatically.');
+      return const Failure(message: AppStrings.iosPairingProgrammaticMessage);
     }
     try {
-      final bool result = await _methodChannel.invokeMethod('pair', {'macAddress': macAddress});
-      return Success(result, statusCode: 200, message: 'Success');
+      final bool result = await _methodChannel.invokeMethod(AppConstants.methodPair, {AppConstants.argMacAddress: macAddress});
+      return Success(result, statusCode: AppConstants.statusCodeSuccess, message: AppStrings.success);
     } on PlatformException catch (e) {
-      return Failure(message: e.message ?? 'Failed to initiate pairing');
+      return Failure(message: e.message ?? AppStrings.failedToInitiatePairing);
     } catch (e) {
       return Failure(message: e.toString());
     }
@@ -60,13 +61,13 @@ class BluetoothPairManager {
   /// Removes pairing from a device.
   Future<Result<bool>> unPair(String macAddress) async {
     if (!Platform.isAndroid) {
-      return const Failure(message: 'Bluetooth pairing is managed by iOS and cannot be initiated programmatically.');
+      return const Failure(message: AppStrings.iosPairingProgrammaticMessage);
     }
     try {
-      final bool result = await _methodChannel.invokeMethod('unPair', {'macAddress': macAddress});
-      return Success(result, statusCode: 200, message: 'Success');
+      final bool result = await _methodChannel.invokeMethod(AppConstants.methodUnPair, {AppConstants.argMacAddress: macAddress});
+      return Success(result, statusCode: AppConstants.statusCodeSuccess, message: AppStrings.success);
     } on PlatformException catch (e) {
-      return Failure(message: e.message ?? 'Failed to remove pairing');
+      return Failure(message: e.message ?? AppStrings.failedToRemovePairing);
     } catch (e) {
       return Failure(message: e.toString());
     }
@@ -75,11 +76,11 @@ class BluetoothPairManager {
   /// Maps Android's BluetoothDevice bond states to [PairState].
   PairState _mapIntToPairState(int value) {
     switch (value) {
-      case 10: // BOND_NONE
+      case AppConstants.bondNone: // BOND_NONE
         return PairState.notBonded;
-      case 11: // BOND_BONDING
+      case AppConstants.bondBonding: // BOND_BONDING
         return PairState.bonding;
-      case 12: // BOND_BONDED
+      case AppConstants.bondBonded: // BOND_BONDED
         return PairState.bonded;
       default:
         return PairState.unknown;

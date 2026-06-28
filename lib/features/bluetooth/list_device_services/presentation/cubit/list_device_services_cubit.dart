@@ -2,6 +2,7 @@ import '../../domain/usecase/discover_services_usecase.dart';
 import '../../domain/usecase/read_characteristic_usecase.dart';
 import '../../domain/usecase/write_characteristic_usecase.dart';
 import 'list_device_services_state.dart';
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/result/result.dart';
 import '../../../../../core/presentation/base_cubit.dart';
 import '../../../../../core/presentation/base_state.dart';
@@ -89,7 +90,7 @@ class ListDeviceServicesCubit extends BaseCubit<ListDeviceServicesState> {
           value: value, // Update local value after successful write
         ),
       );
-      emit(state.copyWithS(effect: const ShowInfoSnackBar('Write Successful')));
+      emit(state.copyWithS(effect: const ShowInfoSnackBar(AppStrings.writeSuccessful)));
     } else if (result is Failure) {
       final message = (result as Failure).message;
       _updateCharacteristic(
@@ -98,7 +99,7 @@ class ListDeviceServicesCubit extends BaseCubit<ListDeviceServicesState> {
           error: message,
         ),
       );
-      emit(state.copyWithS(effect: ShowErrorSnackBar('Write Failed: $message')));
+      emit(state.copyWithS(effect: ShowErrorSnackBar('${AppStrings.writeFailed}: $message')));
     }
   }
 

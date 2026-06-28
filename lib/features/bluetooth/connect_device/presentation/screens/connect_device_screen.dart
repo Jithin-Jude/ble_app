@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../cubit/connect_device_cubit.dart';
 import '../cubit/connect_device_state.dart';
+import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/widgets/app_scaffold.dart';
 import '../../../../../core/widgets/primary_button.dart';
 import '../../../../../core/provider/bluetooth_device_provider.dart';
@@ -51,7 +52,7 @@ class _ConnectDeviceScreenView extends BaseScreen<ConnectDeviceCubit, ConnectDev
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Device: ${device.platformName.isEmpty ? 'Unknown' : device.platformName}',
+              'Device: ${device.platformName.isEmpty ? AppStrings.unknown : device.platformName}',
               style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 8),
@@ -109,7 +110,7 @@ class _ConnectDeviceScreenView extends BaseScreen<ConnectDeviceCubit, ConnectDev
                 const Padding(
                   padding: EdgeInsets.only(bottom: 16.0),
                   child: Text(
-                    'Another device is currently connected. Disconnect it to connect here.',
+                    AppStrings.anotherDeviceConnected,
                     style: TextStyle(color: Colors.orange, fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
@@ -137,7 +138,7 @@ class _ConnectDeviceScreenView extends BaseScreen<ConnectDeviceCubit, ConnectDev
         return 'Bonded';
       case PairState.unknown:
       default:
-        return 'Unknown';
+        return AppStrings.unknown;
     }
   }
 
