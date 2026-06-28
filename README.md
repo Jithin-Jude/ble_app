@@ -17,6 +17,11 @@ The application currently supports:
 
 ---
 
+![Screenshots](screenshots/cover_image.png)
+
+### Demo: [download APK here](https://github.com/Jithin-Jude/ble_app/raw/refs/heads/main/demo_apk/BLE-demo-release.apk "Link to release APK")
+![](screenshots/BLE_demo_video.gif)
+
 # Overview
 
 The primary goal of this project was to gain hands-on experience with Bluetooth Low Energy rather than simply integrating a BLE package.
