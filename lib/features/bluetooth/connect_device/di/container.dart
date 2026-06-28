@@ -31,6 +31,7 @@ Future<void> init(GetIt sl) async {
       connectUseCase: sl(),
       disconnectUseCase: sl(),
       deviceProvider: sl(),
+      pairManager: sl(),
     ),
   );
 }

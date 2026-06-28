@@ -9,6 +9,7 @@ import '../../../../../core/widgets/primary_button.dart';
 import '../../../../../core/provider/bluetooth_device_provider.dart';
 import '../../../../../core/presentation/base_screen.dart';
 import '../../../../../core/di/app_container.dart' as di;
+import '../../../../../core/bluetooth/bluetooth_pair_manager.dart';
 
 class ConnectDeviceScreen extends StatelessWidget {
   const ConnectDeviceScreen({super.key});
@@ -56,6 +57,10 @@ class _ConnectDeviceScreenView extends BaseScreen<ConnectDeviceCubit, ConnectDev
             const SizedBox(height: 8),
             Text('ID: ${device.remoteId.str}'),
             const SizedBox(height: 24),
+            
+            // Connection Section
+            const Text('Connection', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Divider(),
             Row(
               children: [
                 const Text('Status: ', style: TextStyle(fontWeight: FontWeight.bold)),
@@ -68,6 +73,26 @@ class _ConnectDeviceScreenView extends BaseScreen<ConnectDeviceCubit, ConnectDev
                 ),
               ],
             ),
+            const SizedBox(height: 24),
+
+            // Pairing Section
+            const Text('Pairing (Android Only)', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            const Divider(),
+            Row(
+              children: [
+                const Text('Pair Status: ', style: TextStyle(fontWeight: FontWeight.bold)),
+                Text(
+                  _getPairStateText(state.pairState),
+                  style: TextStyle(
+                    color: _getPairStateColor(state.pairState),
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            _buildPairingButtons(context, state, device.remoteId.str),
+
             const Spacer(),
             if (isConnected) ...[
               PrimaryButton(
@@ -100,5 +125,50 @@ class _ConnectDeviceScreenView extends BaseScreen<ConnectDeviceCubit, ConnectDev
         ),
       ),
     );
+  }
+
+  String _getPairStateText(PairState state) {
+    switch (state) {
+      case PairState.notBonded:
+        return 'Not Bonded';
+      case PairState.bonding:
+        return 'Bonding...';
+      case PairState.bonded:
+        return 'Bonded';
+      case PairState.unknown:
+      default:
+        return 'Unknown';
+    }
+  }
+
+  Color _getPairStateColor(PairState state) {
+    switch (state) {
+      case PairState.bonded:
+        return Colors.green;
+      case PairState.bonding:
+        return Colors.orange;
+      case PairState.notBonded:
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
+  }
+
+  Widget _buildPairingButtons(BuildContext context, ConnectDeviceState state, String macAddress) {
+    if (state.pairState == PairState.bonding || state.pairing || state.unPairing) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (state.pairState == PairState.bonded) {
+      return PrimaryButton(
+        label: 'Un-Pair',
+        onPressed: () => context.read<ConnectDeviceCubit>().unPair(macAddress),
+      );
+    } else {
+      return PrimaryButton(
+        label: 'Pair',
+        onPressed: () => context.read<ConnectDeviceCubit>().pair(macAddress),
+      );
+    }
   }
 }
