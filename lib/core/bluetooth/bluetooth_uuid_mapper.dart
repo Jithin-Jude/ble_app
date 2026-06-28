@@ -228,7 +228,7 @@ class BluetoothUuidMapper {
 
   /// Normalizes a UUID string to a common format for lookup.
   /// Supports 16-bit, 32-bit, and 128-bit Bluetooth SIG UUIDs.
-  static String _normalize(String uuid) {
+  static String normalize(String uuid) {
     String normalized = uuid.replaceAll('-', '').toUpperCase();
     if (normalized.length == 32) {
       if (normalized.endsWith('00001000800000805F9B34FB')) {
@@ -244,26 +244,26 @@ class BluetoothUuidMapper {
   /// Returns the human-readable name of a Bluetooth GATT Service.
   /// Returns "Manufacturer Service" if the UUID is not recognized.
   static String getServiceName(String uuid) {
-    final normalized = _normalize(uuid);
+    final normalized = normalize(uuid);
     return _services[normalized] ?? 'Manufacturer Service';
   }
 
   /// Returns the human-readable name of a Bluetooth GATT Characteristic.
   /// Returns "Manufacturer Characteristic" if the UUID is not recognized.
   static String getCharacteristicName(String uuid) {
-    final normalized = _normalize(uuid);
+    final normalized = normalize(uuid);
     return _characteristics[normalized] ?? 'Manufacturer Characteristic';
   }
 
   /// Returns true if the Service UUID is a standard Bluetooth SIG UUID.
   static bool isStandardService(String uuid) {
-    final normalized = _normalize(uuid);
+    final normalized = normalize(uuid);
     return _services.containsKey(normalized);
   }
 
   /// Returns true if the Characteristic UUID is a standard Bluetooth SIG UUID.
   static bool isStandardCharacteristic(String uuid) {
-    final normalized = _normalize(uuid);
+    final normalized = normalize(uuid);
     return _characteristics.containsKey(normalized);
   }
 }

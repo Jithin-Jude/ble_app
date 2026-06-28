@@ -64,7 +64,10 @@ class CharacteristicCard extends StatelessWidget {
                 ),
               ],
             ),
-            CharacteristicValueWidget(value: characteristic.value),
+            CharacteristicValueWidget(
+              uuid: characteristic.uuid,
+              value: characteristic.value,
+            ),
             const SizedBox(height: 16),
             CharacteristicActions(characteristic: characteristic),
           ],
