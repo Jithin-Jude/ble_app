@@ -1,6 +1,6 @@
 import 'package:get_it/get_it.dart';
 import '../bluetooth/bluetooth_manager.dart';
-import '../bluetooth/bluetooth_pair_manager.dart';
+import '../bluetooth/bluetooth_bond_manager.dart';
 import '../provider/bluetooth_device_provider.dart';
 import '../../features/bluetooth/bluetooth_permissions/di/container.dart' as permissions_di;
 import '../../features/bluetooth/scan_devices/di/container.dart' as scan_di;
@@ -12,7 +12,7 @@ final sl = GetIt.instance;
 Future<void> init() async {
   // Core
   sl.registerLazySingleton(() => BluetoothManager());
-  sl.registerLazySingleton(() => BluetoothPairManager());
+  sl.registerLazySingleton(() => BluetoothBondManager());
   sl.registerLazySingleton(() => BluetoothDeviceProvider());
 
   // Features

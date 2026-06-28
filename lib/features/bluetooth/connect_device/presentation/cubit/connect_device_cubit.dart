@@ -13,7 +13,7 @@ import '../../../../../core/provider/bluetooth_device_provider.dart';
 import '../../../../../core/presentation/base_cubit.dart';
 import '../../../../../core/presentation/base_state.dart';
 import '../../../../../core/presentation/ui_effect.dart';
-import '../../../../../core/bluetooth/bluetooth_pair_manager.dart';
+import '../../../../../core/bluetooth/bluetooth_bond_manager.dart';
 
 class ConnectDeviceCubit extends BaseCubit<ConnectDeviceState> {
   final ConnectDeviceUseCase connectUseCase;

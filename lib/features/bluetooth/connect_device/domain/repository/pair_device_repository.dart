@@ -1,4 +1,4 @@
-import '../../../../../core/bluetooth/bluetooth_pair_manager.dart';
+import '../../../../../core/bluetooth/bluetooth_bond_manager.dart';
 import '../../../../../core/result/result.dart';
 
 abstract class PairDeviceRepository {

@@ -14,7 +14,7 @@ enum PairState {
 
 /// Manager for handling Bluetooth pairing operations via Method Channels.
 /// This is independent of FlutterBluePlus and supports Android native pairing.
-class BluetoothPairManager {
+class BluetoothBondManager {
   static const MethodChannel _methodChannel = MethodChannel(AppConstants.pairingMethodChannel);
   static const EventChannel _eventChannel = EventChannel(AppConstants.pairingEventChannel);
 

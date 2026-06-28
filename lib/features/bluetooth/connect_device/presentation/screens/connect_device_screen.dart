@@ -10,7 +10,7 @@ import '../../../../../core/widgets/primary_button.dart';
 import '../../../../../core/provider/bluetooth_device_provider.dart';
 import '../../../../../core/presentation/base_screen.dart';
 import '../../../../../core/di/app_container.dart' as di;
-import '../../../../../core/bluetooth/bluetooth_pair_manager.dart';
+import '../../../../../core/bluetooth/bluetooth_bond_manager.dart';
 
 class ConnectDeviceScreen extends StatelessWidget {
   const ConnectDeviceScreen({super.key});

@@ -1,4 +1,4 @@
-import '../../../../../core/bluetooth/bluetooth_pair_manager.dart';
+import '../../../../../core/bluetooth/bluetooth_bond_manager.dart';
 import '../../../../../core/result/result.dart';
 
 abstract class PairDeviceRemoteDataSource {
@@ -9,25 +9,25 @@ abstract class PairDeviceRemoteDataSource {
 }
 
 class PairDeviceRemoteDataSourceImpl implements PairDeviceRemoteDataSource {
-  final BluetoothPairManager pairManager;
+  final BluetoothBondManager bluetoothBondManager;
 
-  PairDeviceRemoteDataSourceImpl(this.pairManager);
+  PairDeviceRemoteDataSourceImpl(this.bluetoothBondManager);
 
   @override
   Future<Result<PairState>> getPairState(String macAddress) {
-    return pairManager.getPairState(macAddress);
+    return bluetoothBondManager.getPairState(macAddress);
   }
 
   @override
   Future<Result<bool>> pair(String macAddress) {
-    return pairManager.pair(macAddress);
+    return bluetoothBondManager.pair(macAddress);
   }
 
   @override
   Future<Result<bool>> unPair(String macAddress) {
-    return pairManager.unPair(macAddress);
+    return bluetoothBondManager.unPair(macAddress);
   }
 
   @override
-  Stream<PairState> get pairStateStream => pairManager.pairStateStream;
+  Stream<PairState> get pairStateStream => bluetoothBondManager.pairStateStream;
 }

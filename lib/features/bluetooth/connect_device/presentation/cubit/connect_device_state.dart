@@ -1,7 +1,7 @@
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
 import '../../../../../core/presentation/base_state.dart';
 import '../../../../../core/presentation/ui_effect.dart';
-import '../../../../../core/bluetooth/bluetooth_pair_manager.dart';
+import '../../../../../core/bluetooth/bluetooth_bond_manager.dart';
 
 class ConnectDeviceState extends BaseState {
   final BluetoothConnectionState connectionState;

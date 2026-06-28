@@ -1,4 +1,4 @@
-import '../../../../../core/bluetooth/bluetooth_pair_manager.dart';
+import '../../../../../core/bluetooth/bluetooth_bond_manager.dart';
 import '../../../../../core/result/result.dart';
 import '../../domain/repository/pair_device_repository.dart';
 import '../datasource/pair_device_remote_datasource.dart';
